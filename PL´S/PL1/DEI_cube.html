@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <title>DEI Cube</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #title {
+            position: absolute;
+            top: 10vh;
+            width: 100vw;
+            z-index: 1;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            font-size: 6vmin;
+            color: white;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div id='title'>
+        Graphics Systems and Interaction
+    </div>
+    <script type='module'>
+        import * as THREE from '../three/build/three.module.js';
+
+        let scene, camera, renderer;
+        let cube;
+
+        function windowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function initialize() {
+            // Create a scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000000);
+
+            // Create a perspective camera
+            camera = new THREE.PerspectiveCamera(60.0, window.innerWidth / window.innerHeight, 1.0, 10.0);
+
+            // Create a renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            // Create a box geometry
+            const geometry = new THREE.BoxGeometry();
+
+            // Create a texture
+            const texture = new THREE.TextureLoader().load('./textures/DEI_logo.gif');
+
+            // Create a white-colored material with the specified texture
+            const material = new THREE.MeshBasicMaterial({ color: 0xffffff, map: texture });
+
+            // Create a mesh with the specified geometry and material
+            cube = new THREE.Mesh(geometry, material);
+
+            // Add it to the scene
+            scene.add(cube);
+
+            // Set the camera position;
+            camera.position.z = 3.0;
+
+            // Register the event handler to be called on window resize
+            window.addEventListener('resize', windowResize);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Animate the cube
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
+
+            // Render the scene
+            renderer.render(scene, camera);
+        }
+
+        initialize();
+        animate();
+    </script>
+</body>
+
+</html>
