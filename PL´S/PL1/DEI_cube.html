@@ -3,21 +3,19 @@
 
 <head>
     <meta charset='utf-8'>
-    <title>DEI Cube</title>
+    <title>Basic Watch</title>
     <style>
         body {
             margin: 0;
         }
 
-        #title {
+        #parent {
             position: absolute;
-            top: 10vh;
-            width: 100vw;
+            left: 50.0vw;
+            top: 50vh;
             z-index: 1;
             text-align: center;
             font-family: Arial, sans-serif;
-            font-size: 6vmin;
-            color: white;
         }
 
         canvas {
@@ -27,70 +25,96 @@
 </head>
 
 <body>
-    <div id='title'>
-        Graphics Systems and Interaction
-    </div>
-    <script type='module'>
-        import * as THREE from '../three/build/three.module.js';
+<div id='parent'>
+</div>
+<script type='module'>
+    import * as THREE from '../three/build/three.module.js';
+    import Watch from './watch_template.js';
 
-        let scene, camera, renderer;
-        let cube;
+    let scene, camera, renderer;
+    let watch0, watch1, watch2, watch3, watch4;
 
-        function windowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+    function windowResize() {
+        const aspectRatio = window.innerWidth / window.innerHeight;
+        if (aspectRatio < 1.0) {
+            camera.left = -1.0;
+            camera.right = 1.0;
+            camera.top = 1.0 / aspectRatio;
+            camera.bottom = -1.0 / aspectRatio;
+        }
+        else {
+            camera.left = -aspectRatio;
+            camera.right = aspectRatio;
+            camera.top = 1.0;
+            camera.bottom = -1.0;
+        }
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function initialize() {
+        // Create a scene
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x999999);
+
+        // Create an orthographic camera
+        const aspectRatio = window.innerWidth / window.innerHeight;
+        if (aspectRatio < 1.0) {
+            camera = new THREE.OrthographicCamera(-1.0, 1.0, 1.0 / aspectRatio, -1.0 / aspectRatio, 0.0, 1.0);
+        }
+        else {
+            camera = new THREE.OrthographicCamera(-aspectRatio, aspectRatio, 1.0, -1.0, 0.0, 1.0);
         }
 
-        function initialize() {
-            // Create a scene
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x000000);
+        // Create a renderer
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
 
-            // Create a perspective camera
-            camera = new THREE.PerspectiveCamera(60.0, window.innerWidth / window.innerHeight, 1.0, 10.0);
+        // Register the event handler to be called on window resize
+        window.addEventListener('resize', windowResize);
 
-            // Create a renderer
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.appendChild(renderer.domElement);
+        // Create five watches
+        watch0 = new Watch('Porto', new THREE.Vector3(0.0, 0.04, 0.0), 0.5, 0x999999, 0xffffff, 0x333333, 0xcccccc, 0xffffff, 0xff0000);
+        /* To-do #8 - Scaling: uncomment the following line: */
+        //watch0.object.scale.set(0.75, 1.0, 1.0);
+        /* To-do #9 - Rotation: uncomment the following line: */
+        //watch0.object.rotateZ(Math.PI / 4.0);
+        /* To-do #10 - Translation: re-comment the two previous instructions and uncomment the following line: */
+        //watch0.object.translateX(0.5);
+        /* To-do #11 - Reflection (a special case of scale transformation): re-comment the previous instruction and uncomment the following line: */
+        //watch0.object.scale.set(-1.0, 1.0, 1.0);
+        /* To-do #12 - Restore the previous state: re-comment the previous instruction */
+        scene.add(watch0.object);
 
-            // Create a box geometry
-            const geometry = new THREE.BoxGeometry();
+        watch1 = new Watch('New York', new THREE.Vector3(-0.65, 0.65, 0.0), 0.25, 0x999999, 0xffffff, 0x333333, 0xcccccc, 0xffffff, 0xff0000);
+        scene.add(watch1.object);
 
-            // Create a texture
-            const texture = new THREE.TextureLoader().load('./textures/DEI_logo.gif');
+        watch2 = new Watch('Paris', new THREE.Vector3(0.65, 0.65, 0.0), 0.25, 0x999999, 0xffffff, 0x333333, 0xcccccc, 0xffffff, 0xff0000);
+        scene.add(watch2.object);
 
-            // Create a white-colored material with the specified texture
-            const material = new THREE.MeshBasicMaterial({ color: 0xffffff, map: texture });
+        watch3 = new Watch('Sydney', new THREE.Vector3(-0.65, -0.57, 0.0), 0.25, 0x999999, 0xffffff, 0x333333, 0xcccccc, 0xffffff, 0xff0000);
+        scene.add(watch3.object);
 
-            // Create a mesh with the specified geometry and material
-            cube = new THREE.Mesh(geometry, material);
+        watch4 = new Watch('Tokyo', new THREE.Vector3(0.65, -0.57, 0.0), 0.25, 0x999999, 0xffffff, 0x333333, 0xcccccc, 0xffffff, 0xff0000);
+        scene.add(watch4.object);
+    }
 
-            // Add it to the scene
-            scene.add(cube);
+    function animate() {
+        requestAnimationFrame(animate);
+        // Update watches time
+        watch0.update(); // Porto
+        /* To-do #7 - Animate the remaining watches of the scene*/
+        watch1.update(); // New York
+        watch2.update(); // Paris
+        watch3.update(); // Sydney
+        watch4.update(); // Tokyo
+        renderer.render(scene, camera);
+    }
 
-            // Set the camera position;
-            camera.position.z = 3.0;
-
-            // Register the event handler to be called on window resize
-            window.addEventListener('resize', windowResize);
-        }
-
-        function animate() {
-            requestAnimationFrame(animate);
-
-            // Animate the cube
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.01;
-
-            // Render the scene
-            renderer.render(scene, camera);
-        }
-
-        initialize();
-        animate();
-    </script>
+    initialize();
+    animate();
+</script>
 </body>
 
 </html>
