@@ -22,9 +22,9 @@ export default class Player {
             - both the lower and upper boundaries depend on the table and racket dimensions
             - more specifically, the boundaries depend on parameters table.halfSize.y 
             (the table's half Y-dimension) and this.halfSize.y (the racket's half Y-dimension)
-
-        this.centerLower = ...;
-        this.centerUpper = ...; */
+*/
+        this.centerLower = this.center.y-this.halfSize.y;
+        this.centerUpper = this.halfSize.x;
         this.keyStates = { down: false, up: false };
 
         /* To-do #2 - Create the racket (a rectangle) with properties defined by the following parameters:
@@ -48,8 +48,7 @@ export default class Player {
 
     /* To-do #8 - Check the racket's lower and upper boundaries
         - lower boundary: this.centerLower
-        - upper boundary: this.centerUpper
-
+        - upper boundary: this.centerUpper*/
     checkLowerBoundary() {
         if (...) {
             ...;
@@ -60,7 +59,7 @@ export default class Player {
         if (...) {
             ...;
         }
-    } */
+    } 
 
     initialize() {
         this.center = new THREE.Vector3(this.baseline, 0.0, 0.0);
@@ -87,12 +86,12 @@ export default class Player {
             - then compute the racket's new position:
                 new position = current position ± covered distance (+ or - depending on which key the user is pressing)
 */
-        let currentPosition=this.center.y
-        let currentSpeed=this.speed
+        let currentPosition = this.center.y
+        let currentSpeed = this.speed
         let elapsedTime = deltaT
 
         let coveredDistance = currentSpeed * elapsedTime
-        
+
         if (this.keyStates.down) {
             currentPosition -= coveredDistance;
             this.checkLowerBoundary();
@@ -101,7 +100,7 @@ export default class Player {
             currentPosition += coveredDistance;
             this.checkUpperBoundary();
         }
-        
-        this.object.position.set( currentPosition);
+
+        this.object.position.set(currentPosition);
     }
 }
